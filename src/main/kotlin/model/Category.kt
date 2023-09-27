@@ -1,15 +1,8 @@
 package kws.model
 
 import kws.Jdbc
+import kws.Jdbc.snake2CamelCase
 import javax.sql.DataSource
-
-/*
-@Suppress("unchecked_cast")
-operator fun <P> Any?.getValue(
-    thisRef: Any?,
-    property: KProperty<*>
-): P = this as P
- */
 
 class Category(map: Map<String, Any?>) {
     val id: Int by map
@@ -47,25 +40,29 @@ class Category(map: Map<String, Any?>) {
 
         fun findAll(dataSource: DataSource): List<Category> =
             dataSource.connection.use { connection ->
+                // TODO Jdbc.executeQuery(Connection, String)
                 Jdbc.executeQuery(connection) { selectSql }
                     .map { row ->
                         val map = row
                             .map { (name, value) ->
-                                (nameMappings[name] ?: Jdbc.snake2CamelCase(name)) to value
+                                val newName =
+                                    nameMappings[name] ?: snake2CamelCase(name)
+                                newName to value
                             }
                             .toMap()
                             .toMutableMap()
-                        Category(
-                            map
-                                .withDefault { propertyName ->
-                                    map.computeIfAbsent(propertyName) {
-                                        val (names, block) = childMappings[propertyName]!!
-                                        val params = names.associateWith { map[it] }
-                                        block(params, dataSource)
-                                    }
-                                }
-                        )
+                        map.withDefault { propertyName ->
+                            // TODO Can be one (Map<String, Any?>) or many (List<Map<String, Any?>>
+                            map.computeIfAbsent(propertyName) {
+                                val (keyNames, block) =
+                                    childMappings[propertyName]!!
+                                val params =
+                                    keyNames.associateWith { map[it] }
+                                block(params, dataSource)
+                            }
+                        }
                     }
+                    .map(::Category)
             }
 
         val tableName = "categories"

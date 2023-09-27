@@ -8,6 +8,7 @@ fun main(args: Array<String>) {
 
     // TODO Add hook to dispose of resources (such as db connections) on server (as opposed to jvm) shutdown
     val applicationContext = SimpleApplicationContext {
+        // TODO Add ApplicationContext.register<T>(block: () -> T)
         register<DataSource>(
             BasicDataSource().apply {
                 url = "jdbc:postgresql://localhost:5432/willadb?currentSchema=northwind"
