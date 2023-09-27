@@ -9,6 +9,7 @@ import kws.model.Category
 class CategoryList : BaseServlet() {
     override fun service(req: HttpServletRequest, resp: HttpServletResponse) {
         val categories = withConnection(Category::findAll)
+        println(categories.first().products)
         resp.write(render(categories))
     }
 
@@ -17,7 +18,10 @@ class CategoryList : BaseServlet() {
             head { title("Categories") }
             body {
                 fieldSet {
-                    style = "width: 50%; margin-left: auto; margin-right: auto;"
+                    style = """
+                        display: inline-block;
+                        margin-left: auto; margin-right: auto;
+                    """.trimIndent()
                     legend {
                         h2 { +"Categories" }
                     }

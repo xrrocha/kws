@@ -15,6 +15,7 @@ dependencies {
     implementation("org.apache.tomcat.embed:tomcat-embed-jasper:11.0.0-M11")
     implementation("org.postgresql:postgresql:42.6.0")
     implementation("org.jetbrains.kotlinx:kotlinx-html-jvm:0.9.1")
+    implementation("org.apache.commons:commons-dbcp2:2.10.0")
 
     testImplementation(kotlin("test"))
     testImplementation("com.h2database:h2:2.2.222")

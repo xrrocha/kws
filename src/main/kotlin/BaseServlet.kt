@@ -8,6 +8,7 @@ import kotlinx.html.HTML
 import kotlinx.html.html
 import kotlinx.html.stream.createHTML
 import java.sql.Connection
+import javax.sql.DataSource
 
 abstract class BaseServlet : HttpServlet() {
 
@@ -20,8 +21,8 @@ abstract class BaseServlet : HttpServlet() {
         super.init(config)
     }
 
-    protected fun <T> withConnection(block: (Connection) -> T): T =
-        applicationContext.lookup<Connection>().let(block)
+    protected fun <T> withConnection(block: (DataSource) -> T): T =
+        block(applicationContext.lookup<DataSource>())
 
     protected fun html(block: HTML.() -> Unit): String =
         createHTML().html { block(this) }
